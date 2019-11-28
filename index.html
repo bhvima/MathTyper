@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang=en-US>
+   <head>
+      <title>MathTyper</title>
+      <link rel="stylesheet" href="assets/mathquill.css"/>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <script src="assets/mathquill.js"></script>
+      <script>
+         var MQ = MathQuill.getInterface(2);
+      </script>
+      <style>
+         #container {
+           border-radius: 25px;
+           border: 2px solid #03a1fc;
+           padding: 20px;
+         }
+      </style>
+   </head>
+   <body>
+      <div id = "container">
+      </div>
+      <script>
+         var numlines = 0;
+         var container = document.getElementById("container");
+         var lines = [];
+
+         function createLine(line_num) {
+         	var elem = document.createElement("p");
+         	elem.setAttribute("id", line_num);
+         	var sub_elem = document.createElement("span");
+         	sub_elem.setAttribute("class", "line");
+         	elem.appendChild(sub_elem);
+         	lines[line_num] = MQ.MathField(sub_elem);
+         	return elem;
+         }
+
+         function newLine() {
+         	container.appendChild(createLine(numlines));
+         	numlines += 1;
+         }
+
+         function removeLine(line_num) {
+         	if(line_num == 0 && numlines == 1){
+         		return;
+         	}
+         	lines.splice(line_num, 1);
+         	
+         	var elem = document.getElementById(line_num);
+         	elem.parentNode.removeChild(elem);
+
+         	for (var i = line_num + 1; i < numlines; i++) {
+         		elem = document.getElementById(i);
+         		elem.setAttribute("id", i - 1);
+         	}
+
+         	numlines -= 1;
+
+         	if (line_num == 0) {
+         		lines[0].focus();
+         	} 
+         	else {
+         		lines[line_num - 1].focus();
+         	}
+         }
+
+         function moveUp(line_num) {
+         	if(line_num != 0){
+         		lines[line_num - 1].focus();
+         	}
+         }
+
+         function moveDown(line_num) {
+         	if(line_num != numlines - 1){
+         		lines[line_num + 1].focus();
+         	}
+         }
+
+         function checkKeyPress(e) {
+         	var currentLine = parseInt(e.path[3].id);
+         	switch(e.key){
+         		case "Enter":
+         			if(currentLine == numlines - 1){
+         				newLine();
+         			}
+         			lines[currentLine + 1].focus();
+         			break;
+         		case "Backspace":
+         			if(lines[currentLine].latex().length == 0){
+         				removeLine(currentLine);
+         			}
+         			break;
+         		case "ArrowUp":
+         			moveUp(currentLine);
+         			break;
+         		case "ArrowDown":
+         			moveDown(currentLine);
+         			break;
+         	}
+         }
+
+         newLine();
+         lines[0].focus();
+         container.addEventListener("keydown", checkKeyPress, false);
+
+      </script>
+   </body>
+</html>
