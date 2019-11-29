@@ -10,9 +10,13 @@
       </script>
       <style>
          #container {
-           border-radius: 25px;
+           border-radius: 10px;
            border: 2px solid #03a1fc;
            padding: 20px;
+         }
+
+         span {
+            width: 100%
          }
       </style>
    </head>
@@ -77,6 +81,7 @@
 
          function checkKeyPress(e) {
          	var currentLine = parseInt(e.path[3].id);
+            console.log(lines[currentLine].latex());
          	switch(e.key){
          		case "Enter":
          			if(currentLine == numlines - 1){
